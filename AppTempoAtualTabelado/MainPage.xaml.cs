@@ -1,24 +1,67 @@
-﻿namespace AppTempoAtualTabelado
+﻿using System.Diagnostics;
+
+namespace AppTempoAtualTabelado
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+
+        CancellationTokenSource _cancelTokenSource;
+        bool _isCheckingLocation;
+
+        string? cidade;
+        string latitude_value, longitude_value;
 
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+       
+
+        private async void btn_getLocation_Clicked(object sender, EventArgs e)
         {
-            count++;
+            try
+            {
+                _cancelTokenSource = new CancellationTokenSource();
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+                GeolocationRequest request =
+                    new GeolocationRequest(GeolocationAccuracy.Medium,
+                    TimeSpan.FromSeconds(10));
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+                Location? location = await Geolocation.Default.GetLocationAsync(
+                    request, _cancelTokenSource.Token);
+
+
+                if (location != null)
+                {
+                    latitude_value = location.Latitude.ToString();
+                    longitude_value = location.Longitude.ToString();
+
+
+                    Debug.WriteLine("---------------------------------------");
+                    Debug.WriteLine(location);
+                    Debug.WriteLine("---------------------------------------");
+                }
+
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                await DisplayAlert("Erro: Dispositivo não Suporta",
+                    fnsEx.Message, "OK");
+            }
+            catch (FeatureNotEnabledException fneEx)
+            {
+                await DisplayAlert("Erro: Localização Desabilitada",
+                    fneEx.Message, "OK");
+            }
+            catch (PermissionException pEx)
+            {
+                await DisplayAlert("Erro: Permissão", pEx.Message, "OK");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Erro: ", ex.Message, "OK");
+            }
         }
     }
 

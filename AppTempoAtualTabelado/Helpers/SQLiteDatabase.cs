@@ -1,4 +1,5 @@
 ﻿using AppTempoAtualTabelado.Model;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,12 +23,12 @@ namespace AppTempoAtualTabelado.Helpers
             return _conn.InsertAsync(de);
         }
 
-        public Task<List<DadosEndereco>> Update(DadosEndereco de)
+       /* public Task<List<DadosEndereco>> Update(DadosEndereco de)
         {
             string sql = "UPDATE Produto SET Descricao=?, Quantidade=?, Preco=? WHERE Id=?";
 
             return _conn.QueryAsync<Produto>(sql, de.Descricao, de.Quantidade, de.Preco, de.Id);
-        }
+        }*/
 
         public Task<List<DadosEndereco>> SelectAll()
         {
@@ -35,11 +36,11 @@ namespace AppTempoAtualTabelado.Helpers
             return _conn.Table<DadosEndereco>().ToListAsync();
         }
 
-        public Task<int> Delete(int id)
+      /*  public Task<int> Delete(int id)
         {
 
             return _conn.Table<DadosEndereco>().DeleteAsync(i => i.Id == id);
-        }
+        }*/
 
        
     }
