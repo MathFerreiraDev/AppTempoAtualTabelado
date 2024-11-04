@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AppTempoAtualTabelado.Model;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AppTempoAtualTabelado.Services
 {
     class DataServiceCep
     {
-       ublic static async Task<Tempo?> GetPrevisaoDoTempo(string cidade)
+       public static async Task<CondicoesClima?> GetPrevisaoDoTempo(string cidade)
         {
             // https://openweathermap.org/current#current_JSON
 
@@ -20,7 +22,7 @@ namespace AppTempoAtualTabelado.Services
             string url = $"http://api.openweathermap.org/data/2.5/weather?" +
                          $"q={cidade}&units=metric&appid={appId}";
 
-            Tempo tempo = null;
+            CondicoesClima tempo = null;
 
             using (HttpClient client = new HttpClient())
             {

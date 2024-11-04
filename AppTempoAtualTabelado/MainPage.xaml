@@ -1,42 +1,83 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="AppTempoAtualTabelado.MainPage">
+             x:Class="AppTempoAtualTabelado.MainPage"
+             Title="RESGISTRAR CLIMA ATUAL 🌎⛅">
 
     <ContentPage.Resources>
-        <Style TargetType="Label">
-            <Setter Property="VerticalTextAlignment" Value="Center"/>
-            <Setter Property="VerticalOptions" Value="FillAndExpand"/>
-        </Style>
+       
         <Style TargetType="Button">
-            <Setter Property="HorizontalOptions" Value="Center"/>
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
             <Setter Property="BackgroundColor" Value="#1f314d"/>
-            <Setter Property="Padding" Value="10, 5"/>
-            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="HeightRequest" Value="50"/>
+            <Setter Property="Margin" Value="50, 0"/>
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="TextColor" Value="White"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+        <Style TargetType="ListView">
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+            <Setter Property="BackgroundColor" Value="Gray"/>
+            <Setter Property="VerticalOptions" Value="FillAndExpand"/>
+            <Setter Property="Margin" Value="50, 10"/>
+        </Style>
+
+        <Style x:Key="lbl_header_result" TargetType="Label">
+            <Setter Property="TextColor" Value="Gray"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="lbl_value_result" TargetType="Label">
+            <Setter Property="TextColor" Value="#1a86c4"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
         </Style>
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <VerticalStackLayout>
-            <Button x:Name="btn_getLocation" Clicked="btn_getLocation_Clicked"/>
-            <RefreshView x:Name="ref_carregando" IsRefreshing="False" Refreshing="ref_carregando_Refreshing"/>
+        <VerticalStackLayout VerticalOptions="FillAndExpand" Margin="0, 30" Padding="50">
+            <Button x:Name="btn_getLocation" Clicked="btn_getLocation_Clicked" Text="OBTER LOCALIZAÇÃO"/>
+            <!--<RefreshView x:Name="ref_carregando" IsRefreshing="False" Refreshing="ref_carregando_Refreshing"/>-->
+            <Label x:Name="lbl_coordenadas" TextColor="Green" Margin="0, 10" FontSize="20" FontAttributes="Bold" Text="*PLACEMARK*" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
+            <Button x:Name="btn_getweather" Clicked="btn_getweather_Clicked" Margin="50, 10"  Text="OBTER CLIMA"/>
+            
+            <StackLayout x:Name="frm_weatherform" BackgroundColor="#f2f2f2" Padding="20" IsVisible="False"  HorizontalOptions="FillAndExpand">
+                <Label x:Name="lbl_resultCity" FontSize="22" FontAttributes="Bold" TextColor="#102030" Text="xxxxxxxxxxxxx" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start"/>
+                <Grid Margin="0, 10"  RowDefinitions="*, *, *, *" ColumnDefinitions="*, *, *, *" RowSpacing="5">
+                    <Label Text="TEMPERATURA: " Grid.Row="0" Grid.Column="0" Style="{StaticResource lbl_header_result}"/>
+                    <Label x:Name="lbl_temperature" Text="XX" Grid.Row="0" Grid.Column="1" Style="{StaticResource lbl_value_result}"/>
 
+                    <Label Text="VEL. VENTO: " Grid.Row="1" Grid.Column="0" Style="{StaticResource lbl_header_result}"/>
+                    <Label x:Name="lbl_wind" Text="XX" Grid.Row="1" Grid.Column="1" Style="{StaticResource lbl_value_result}"/>
+
+                    <Label Text="UMIDADE REL.: " Grid.Row="2" Grid.Column="0" Style="{StaticResource lbl_header_result}"/>
+                    <Label x:Name="lbl_humidty" Text="XX" Grid.Row="2" Grid.Column="1" Style="{StaticResource lbl_value_result}"/>
+
+                    <Label Text="VISIBILIDADE: " Grid.Row="3" Grid.Column="0" Style="{StaticResource lbl_header_result}"/>
+                    <Label x:Name="lbl_visibility" Text="XX" Grid.Row="3" Grid.Column="1" Style="{StaticResource lbl_value_result}"/>
+
+
+                    <Label Text="AMANHECER: " Grid.Row="0" Grid.Column="2" Style="{StaticResource lbl_header_result}"/>
+                    <Label x:Name="lbl_sunrise" Text="XX" Grid.Row="0" Grid.Column="3" Style="{StaticResource lbl_value_result}"/>
+
+                    <Label Text="POR DO SOL: " Grid.Row="1" Grid.Column="2" Style="{StaticResource lbl_header_result}"/>
+                    <Label x:Name="lbl_sunset" Text="XX" Grid.Row="1" Grid.Column="3" Style="{StaticResource lbl_value_result}"/>
+
+
+                    <Label Text="CLIMA: " Grid.Row="2" Grid.Column="2" Style="{StaticResource lbl_header_result}"/>
+                    <Label x:Name="lbl_weather" Text="XX" Grid.Row="2" Grid.Column="3" Style="{StaticResource lbl_value_result}"/>
+                </Grid>
+            </StackLayout>
+            
             <ListView x:Name="lst_locations" Margin="10">
-                <ListView.Header>
-                    <Grid ColumnDefinitions="3*, *, *, *" Padding="0, 5, 0, 10">
-                        <Label FontSize="20" TextColor="DarkSlateBlue" FontAttributes="Bold" Grid.Column="0" Text="Produto"/>
-                        <Label FontSize="20" TextColor="DarkSlateBlue" FontAttributes="Bold" Grid.Column="1" Text="Quant."/>
-                        <Label FontSize="20" TextColor="DarkSlateBlue" FontAttributes="Bold" Grid.Column="2" Text="Preço"/>
-                        <Label FontSize="20" TextColor="DarkSlateBlue" FontAttributes="Bold" Grid.Column="3" Text="Total"/>
-                    </Grid>
-                </ListView.Header>
+               
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.ContextActions>
-                                <MenuItem Text="Remover" Clicked="MenuItem_Clicked_Remover"/>
+                                <MenuItem Text="Remover" Clicked="MenuItem_Clicked"/>
                             </ViewCell.ContextActions>
 
                             <Grid RowDefinitions="Auto" ColumnDefinitions="3*, *, *, *" >
@@ -49,6 +90,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <WebView x:Name="web_mapa"  HeightRequest="500"/>
 
         </VerticalStackLayout>
     </ContentPage.Content>

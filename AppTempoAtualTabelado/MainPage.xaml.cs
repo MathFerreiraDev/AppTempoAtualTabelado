@@ -1,14 +1,17 @@
-﻿using System.Diagnostics;
+﻿using AppTempoAtualTabelado.Model;
+using AppTempoAtualTabelado.Services;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace AppTempoAtualTabelado
 {
     public partial class MainPage : ContentPage
     {
-        ObservableCollection<Produto> list_locations_cs = new ObservableCollection<Produto>();
+        ObservableCollection<DadosEndereco> list_locations_cs = new ObservableCollection<DadosEndereco>();
         CancellationTokenSource _cancelTokenSource;
 
         string? cidade;
-        string latitude_value, longitude_value;
+        
 
         public MainPage()
         {
@@ -34,19 +37,33 @@ namespace AppTempoAtualTabelado
 
                 if (location != null)
                 {
-                    latitude_value = location.Latitude.ToString();
-                    longitude_value = location.Longitude.ToString();
+                    string? latitude_value = location.Latitude.ToString();
+                    string? longitude_value = location.Longitude.ToString();
 
 
                     Debug.WriteLine("---------------------------------------");
                     Debug.WriteLine(location);
                     Debug.WriteLine("---------------------------------------");
+
+                    await GetGeocodeReverseData(latitude_value, longitude_value);
+
+                    lst_locations.ItemsSource = list_locations_cs;
+                    lbl_coordenadas.Text = $"Latitude: {location.Latitude}; Longitude: {location.Longitude}";
+
+                    string url_mapa = $"https://embed.windy.com/embed.html" +
+                                           $"?type=map&location=coordinates&metricRain=mm" +
+                                           $"&metricTemp=°C&metricWind=km/h&zoom=5&overlay=wind" +
+                                           $"&product=ecmwf&level=surface" +
+                                           $"&lat={location.Latitude}&lon={location.Longitude}";
+
+
+                    Debug.WriteLine(url_mapa);
+
+                    web_mapa.Source = url_mapa;
                 }
 
                 //RETORNA UM POSSIVEL VALOR DE CIDADE A PARTIR DA LONGITUDE A LATITUDE
-                await GetGeocodeReverseData(latitude_value, longitude_vlaue);
-
-                lst_locations.ItemsSource = list_locations_cs;
+                
 
             }
             catch (FeatureNotSupportedException fnsEx)
@@ -70,11 +87,11 @@ namespace AppTempoAtualTabelado
         }
 
         //DECIFRAR A LOCALIZAÇÃO
-          private async Task<string> GetGeocodeReverseData(latitude, longitude)
+          private async Task<string> GetGeocodeReverseData(string? latitude, string? longitude)
         {
             IEnumerable<Placemark> placemarks = 
                 await Geocoding.Default.GetPlacemarksAsync(
-                    latitude, longitude);
+                    double.Parse(latitude), double.Parse(longitude));
 
             Placemark? placemark = placemarks?.FirstOrDefault();
 
@@ -102,13 +119,19 @@ namespace AppTempoAtualTabelado
             return "Nada";
         }
 
-        private async void GetWeather()
+
+        private void MenuItem_Clicked(object sender, EventArgs e)
+        {
+
+        }
+
+        private async Task btn_getweather_ClickedAsync(object sender, EventArgs e)
         {
             try
             {
                 if (!String.IsNullOrEmpty(cidade))
                 {
-                    CondicoesClima? previsao = await DataService.GetPrevisaoDoTempo(cidade);
+                    CondicoesClima? previsao = await DataServiceCep.GetPrevisaoDoTempo(cidade);
 
                     string dados_previsao = "";
 
@@ -127,27 +150,29 @@ namespace AppTempoAtualTabelado
                                          $"Longitude: {previsao.Longitude}";
 
 
+                        Console.WriteLine(dados_previsao);
+                        
+                        frm_weatherform.IsVisible = true;
+                        lbl_resultCity.Text = cidade;
+                        lbl_temperature.Text = previsao.Temperature;
+                        lbl_wind.Text = previsao.Wind;
+                        lbl_humidty.Text = previsao.Humidity;
+                        lbl_visibility.Text = previsao.Visibility;
+                        lbl_sunrise.Text = previsao.Sunrise;
+                        lbl_sunset.Text = previsao.Sunset;
+                        lbl_weather.Text = previsao.Weather;
 
-                        string url_mapa = $"https://embed.windy.com/embed.html" +
-                                           $"?type=map&location=coordinates&metricRain=mm" +
-                                           $"&metricTemp=°C&metricWind=km/h&zoom=5&overlay=wind" +
-                                           $"&product=ecmwf&level=surface" +
-                                           $"&lat={previsao.Latitude}&lon={previsao.Longitude}";
-
-
-                        Debug.WriteLine(url_mapa);
-                        mapa.Source = url_mapa;                                        
                     }
                     else
                     {
-                        dados_previsao = $"Sem dados, previsão nula.";
+                        await DisplayAlert("Alerta", "Sem dados, previsão nula.", "OK");
                     }
 
                     Debug.WriteLine("-------------------------------------------");
                     Debug.WriteLine(dados_previsao);
                     Debug.WriteLine("-------------------------------------------");
 
-                    lbl_previsao.Text = dados_previsao;
+
                 }
             }
             catch (Exception ex)
