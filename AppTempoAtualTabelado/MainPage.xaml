@@ -17,9 +17,10 @@
         </Style>
         <Style TargetType="ListView">
             <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
-            <Setter Property="BackgroundColor" Value="Gray"/>
+            <Setter Property="BackgroundColor" Value="LightGray"/>
             <Setter Property="VerticalOptions" Value="FillAndExpand"/>
             <Setter Property="Margin" Value="50, 10"/>
+
         </Style>
 
         <Style x:Key="lbl_header_result" TargetType="Label">
@@ -33,14 +34,21 @@
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontAttributes" Value="Bold"/>
         </Style>
+
+        <Style x:Key="lbl_weather_list" TargetType="Label">
+            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="HorizontalOptions" Value="Center"/>
+        </Style>
     </ContentPage.Resources>
 
     <ContentPage.Content>
+        <ScrollView>
         <VerticalStackLayout VerticalOptions="FillAndExpand" Margin="0, 30" Padding="50">
             <Button x:Name="btn_getLocation" Clicked="btn_getLocation_Clicked" Text="OBTER LOCALIZAÇÃO"/>
             <!--<RefreshView x:Name="ref_carregando" IsRefreshing="False" Refreshing="ref_carregando_Refreshing"/>-->
             <Label x:Name="lbl_coordenadas" TextColor="Green" Margin="0, 10" FontSize="20" FontAttributes="Bold" Text="*PLACEMARK*" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center"/>
-            <Button x:Name="btn_getweather" Clicked="btn_getweather_Clicked" Margin="50, 10"  Text="OBTER CLIMA"/>
+            <Button x:Name="btn_getweather" Clicked="btn_getweather_Clicked_1" Margin="50, 10"  Text="OBTER CLIMA"/>
             
             <StackLayout x:Name="frm_weatherform" BackgroundColor="#f2f2f2" Padding="20" IsVisible="False"  HorizontalOptions="FillAndExpand">
                 <Label x:Name="lbl_resultCity" FontSize="22" FontAttributes="Bold" TextColor="#102030" Text="xxxxxxxxxxxxx" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start"/>
@@ -71,20 +79,23 @@
             </StackLayout>
             
             <ListView x:Name="lst_locations" Margin="10">
-               
 
-                <ListView.ItemTemplate>
+
+                    <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ViewCell>
+                            <ViewCell >
                             <ViewCell.ContextActions>
                                 <MenuItem Text="Remover" Clicked="MenuItem_Clicked"/>
                             </ViewCell.ContextActions>
 
-                            <Grid RowDefinitions="Auto" ColumnDefinitions="3*, *, *, *" >
-                                <Label Grid.Column="0" FontSize="20" Text="{Binding Descricao}"/>
-                                <Label Grid.Column="1" FontSize="20" Text="{Binding Quantidade}"/>
-                                <Label Grid.Column="2" FontSize="20" Text="{Binding Preco}"/>
-                                <Label Grid.Column="3" FontSize="20" Text="{Binding Total}"/>
+                                <Grid RowDefinitions="Auto" ColumnDefinitions="*, *, *, *, *, *, *" >
+                                    <Label Grid.Column="0" FontSize="20"  Style="{StaticResource lbl_weather_list}" Text="{Binding Title}"/>
+                                    <Label Grid.Column="1" FontSize="20"  Style="{StaticResource lbl_weather_list}" Text="{Binding Temperature}"/>
+                                    <Label Grid.Column="2" FontSize="20"  Style="{StaticResource lbl_weather_list}" Text="{Binding Wind}"/>
+                                    <Label Grid.Column="3" FontSize="20"  Style="{StaticResource lbl_weather_list}" Text="{Binding Humidity}"/>
+                                    <Label Grid.Column="4" FontSize="20"  Style="{StaticResource lbl_weather_list}" Text="{Binding Visibility}"/>
+                                    <Label Grid.Column="5" FontSize="20"  Style="{StaticResource lbl_weather_list}" Text="{Binding Sunrise}"/>
+                                    <Label Grid.Column="6" FontSize="20"  Style="{StaticResource lbl_weather_list}" Text="{Binding Sunset}"/>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>
@@ -93,6 +104,7 @@
             <WebView x:Name="web_mapa"  HeightRequest="500"/>
 
         </VerticalStackLayout>
+        </ScrollView>
     </ContentPage.Content>
 
 </ContentPage>

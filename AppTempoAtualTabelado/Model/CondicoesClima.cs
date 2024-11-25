@@ -8,6 +8,7 @@ namespace AppTempoAtualTabelado.Model
 {
     public class CondicoesClima
     {
+        public int Id { get; set; }
         public string? Title { get; set; }
         public string? Temperature { get; set; }
         public string? Wind { get; set; }

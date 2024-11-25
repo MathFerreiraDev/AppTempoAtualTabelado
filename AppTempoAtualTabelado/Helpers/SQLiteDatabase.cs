@@ -8,27 +8,27 @@ using System.Threading.Tasks;
 
 namespace AppTempoAtualTabelado.Helpers
 {
-    class SQLiteDatabase
+    public class SQLiteDatabase
     {
         readonly SQLiteAsyncConnection _conn;
 
         public SQLiteDatabase(string path)
         {
             _conn = new SQLiteAsyncConnection(path);
-            _conn.CreateTableAsync<DadosEndereco>().Wait();
+            _conn.CreateTableAsync<CondicoesClima>().Wait();
         }
 
-        public Task<int> Insert(DadosEndereco de)
+        public Task<int> Insert(CondicoesClima de)
         {
             return _conn.InsertAsync(de);
         }
 
       
 
-        public Task<List<DadosEndereco>> SelectAll()
+        public Task<List<CondicoesClima>> SelectAll()
         {
 
-            return _conn.Table<DadosEndereco>().ToListAsync();
+            return _conn.Table<CondicoesClima>().ToListAsync();
         }
 
       

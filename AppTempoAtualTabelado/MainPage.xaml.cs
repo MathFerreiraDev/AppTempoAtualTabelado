@@ -7,7 +7,7 @@ namespace AppTempoAtualTabelado
 {
     public partial class MainPage : ContentPage
     {
-        ObservableCollection<DadosEndereco> list_locations_cs = new ObservableCollection<DadosEndereco>();
+        ObservableCollection<CondicoesClima> list_locations_cs = new ObservableCollection<CondicoesClima>();
         CancellationTokenSource _cancelTokenSource;
 
         string? cidade;
@@ -19,8 +19,23 @@ namespace AppTempoAtualTabelado
             lst_locations.ItemsSource = list_locations_cs;
         }
 
-       
-        //OBTER AS COORDENADAS ATUAIS
+        protected async override void OnAppearing()
+        {
+            if (list_locations_cs.Count == 0)
+            {
+
+                List<CondicoesClima> tmp = await App.Db.SelectAll();
+                foreach (CondicoesClima p in tmp)
+                {
+                    list_locations_cs.Add(p);
+                }
+
+            }
+        }
+
+
+
+      
         private async void btn_getLocation_Clicked(object sender, EventArgs e)
         {
             try
@@ -47,7 +62,7 @@ namespace AppTempoAtualTabelado
 
                     await GetGeocodeReverseData(latitude_value, longitude_value);
 
-                    lst_locations.ItemsSource = list_locations_cs;
+                    
                     lbl_coordenadas.Text = $"Latitude: {location.Latitude}; Longitude: {location.Longitude}";
 
                     string url_mapa = $"https://embed.windy.com/embed.html" +
@@ -86,7 +101,7 @@ namespace AppTempoAtualTabelado
             }
         }
 
-        //DECIFRAR A LOCALIZAÇÃO
+       
           private async Task<string> GetGeocodeReverseData(string? latitude, string? longitude)
         {
             IEnumerable<Placemark> placemarks = 
@@ -125,7 +140,9 @@ namespace AppTempoAtualTabelado
 
         }
 
-        private async Task btn_getweather_ClickedAsync(object sender, EventArgs e)
+       
+
+        private async void btn_getweather_Clicked_1(object sender, EventArgs e)
         {
             try
             {
@@ -151,7 +168,7 @@ namespace AppTempoAtualTabelado
 
 
                         Console.WriteLine(dados_previsao);
-                        
+
                         frm_weatherform.IsVisible = true;
                         lbl_resultCity.Text = cidade;
                         lbl_temperature.Text = previsao.Temperature;
@@ -162,6 +179,9 @@ namespace AppTempoAtualTabelado
                         lbl_sunset.Text = previsao.Sunset;
                         lbl_weather.Text = previsao.Weather;
 
+                        list_locations_cs.Add(previsao);
+                        await App.Db.Insert(previsao);
+                        lst_locations.ItemsSource = list_locations_cs;
                     }
                     else
                     {
